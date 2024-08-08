@@ -1,0 +1,48 @@
+import RPi.GPIO as GPIO
+import time
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+ENA=13
+ENB=12
+GPIO.setup(2,GPIO.IN) #GPIO 2 -> Left IR out purple
+GPIO.setup(3,GPIO.IN) #GPIO 3 -> Right IR out white
+GPIO.setup(24,GPIO.OUT) #GPIO 4 -> Motor 1 terminal A
+GPIO.setup(23,GPIO.OUT) #GPIO 14 -> Motor 1 terminal B
+GPIO.setup(5,GPIO.OUT) #GPIO 17 -> Motor Left terminal A
+GPIO.setup(6,GPIO.OUT) #GPIO 18 -> Motor Left terminal B
+GPIO.setup(ENA, GPIO.OUT)
+GPIO.setup(ENB, GPIO.OUT)
+motor_pwm1 = GPIO.PWM(ENA, 100)
+motor_pwm2 = GPIO.PWM(ENB, 100)
+motor_pwm1.start(0)
+motor_pwm2.start(0)
+while True:
+ if(GPIO.input(2)==False and GPIO.input(3)==False): #both while 
+move forward
+ GPIO.output(24,True) #1A+
+ GPIO.output(23,False) #1B-
+ GPIO.output(5,True) #2A+
+ GPIO.output(6,False) #2B-
+ motor_pwm1.ChangeDutyCycle(45)
+ motor_pwm2.ChangeDutyCycle(45)
+ elif(GPIO.input(2)==True and GPIO.input(3)==False): #turn right
+ GPIO.output(24,False) #1A+
+ GPIO.output(23,True) #1B-
+ GPIO.output(5,True) #2A+
+ GPIO.output(6,False) #2B-
+ motor_pwm1.ChangeDutyCycle(30)
+ motor_pwm2.ChangeDutyCycle(35)
+ elif(GPIO.input(2)==False and GPIO.input(3)==True): #turn left
+ GPIO.output(24,True) #1A+
+ GPIO.output(23,False) #1B-
+ GPIO.output(5,False) #2A+
+ GPIO.output(6,True) #2B-
+ motor_pwm1.ChangeDutyCycle(35)
+ motor_pwm2.ChangeDutyCycle(30)
+ else: #stay still
+ GPIO.output(24,True) #1A+
+ GPIO.output(23,True) #1B-
+ GPIO.output(5,True) #2A+
+ GPIO.output(6,True) #2B-
+ motor_pwm1.ChangeDutyCycle(0)
+ motor_pwm2.ChangeDutyCycle(0)
