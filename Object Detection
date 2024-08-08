@@ -1,0 +1,117 @@
+#include <Servo.h> 
+#include <NewPing.h> 
+boolean move = false;
+int d = 100;
+NewPing sonar(A1, A2, 200); //sensor function (trig_pin, echo_pin, 
+maximum_distance)
+Servo myservo; 
+void setup(){
+ pinMode(4, OUTPUT);
+ pinMode(5, OUTPUT);
+ pinMode(6, OUTPUT);
+ pinMode(7, OUTPUT);
+ 
+ myservo.attach(10); 
+ myservo.write(115);
+ delay(2000);
+ for(d=0; d<4; d++)
+ {
+ d = sensorread();
+ delay(100);
+ } 
+}
+void loop(){
+ int dr = 0;
+ int dl = 0;
+ delay(50);
+ if (d <= 20){
+ stop();
+ delay(300);
+ backward();
+ delay(400);
+ stop();
+ delay(300);
+ dr = checkR();
+ delay(300);
+ dl = checkL();
+ delay(300);
+ if (dr >= dl){
+ right();
+ stop();
+ }
+ else{
+ left();
+ stop();
+ }
+ }
+ else{
+ forward(); 
+ } d = sensorread();
+}
+int checkR(){ 
+ myservo.write(50);
+ delay(500);
+ int d = sensorread();
+ delay(100);
+ myservo.write(115);
+ return d;}
+int checkL(){
+ myservo.write(150);
+ delay(500);
+ int d = sensorread();
+ delay(100);
+ myservo.write(115);
+ return d;
+ delay(100);
+}
+int sensorread(){
+ delay(50);
+ int d = sonar.ping_cm();
+ if (d == 0){
+ d = 250;
+ } return d;
+}
+void stop(){ 
+ digitalWrite(4,HIGH);
+ digitalWrite(5,HIGH);
+ digitalWrite(6,HIGH);
+ digitalWrite(7,HIGH);
+}
+void forward(){
+ if(!move){
+ move = true;
+ digitalWrite(4, HIGH);
+ digitalWrite(5, LOW);
+ digitalWrite(6, HIGH);
+ digitalWrite(7, LOW); 
+ }
+}
+void backward(){
+ move = false;
+ digitalWrite(5, HIGH);
+ digitalWrite(4, LOW);
+ digitalWrite(7, HIGH);
+ digitalWrite(6, LOW);
+}
+void right(){
+ digitalWrite(4, HIGH);
+ digitalWrite(5, LOW); 
+ digitalWrite(7, HIGH);
+ digitalWrite(6, LOW); 
+ delay(500);
+ digitalWrite(4, HIGH);
+ digitalWrite(5, LOW);
+ digitalWrite(6, HIGH);
+ digitalWrite(7, LOW);
+}
+void left(){
+ digitalWrite(5, HIGH);
+ digitalWrite(4, LOW);
+ digitalWrite(6, HIGH);
+ digitalWrite(7, LOW);
+ delay(500);
+ digitalWrite(4, HIGH);
+ digitalWrite(5, LOW);
+ digitalWrite(6, HIGH);
+ digitalWrite(7, LOW); 
+}
